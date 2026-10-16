@@ -21,11 +21,17 @@ pipeline {
             }
         }
 
-        stage('Validate Configuration') {
+    stage('Validate Configuration') {
             steps {
-                bat '"%COMPOSE%" config --quiet'
+                bat '''
+                        set "MYSQL_PASSWORD=ci-validation-placeholder"
+                        set "MYSQL_ROOT_PASSWORD=ci-validation-placeholder"
+                        set "GRAFANA_ADMIN_PASSWORD=ci-validation-placeholder"
+                        "%DOCKER%" compose config --quiet
+                '''
             }
-        }
+    }
+
 
         stage('Test Backend') {
             steps {
