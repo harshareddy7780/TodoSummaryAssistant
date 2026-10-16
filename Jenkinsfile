@@ -141,6 +141,11 @@ if errorlevel 1 exit /b 1
 
                             set "SSH=C:\\Windows\\System32\\OpenSSH\\ssh.exe"
                             set "SCP=C:\\Windows\\System32\\OpenSSH\\scp.exe"
+			    icacls "%EC2_KEY%" /inheritance:r
+if errorlevel 1 exit /b 1
+
+icacls "%EC2_KEY%" /grant:r "%USERNAME%:R"
+if errorlevel 1 exit /b 1
 
                             if not exist "%SSH%" (
                                 echo ERROR: OpenSSH ssh.exe not found.
