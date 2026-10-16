@@ -40,15 +40,14 @@ if errorlevel 1 exit /b 1
             }
         }
 
-        stage('Test Frontend') {
-            steps {
-                dir('Frontend/todo') {
-                    bat 'npm ci'
-                    bat 'npm test -- --watchAll=false --passWithNoTests'
-                }
-            }
-        }
-
+	stage('Test Frontend') {
+    		steps {
+        		dir('Frontend/todo') {
+            			bat '"C:\\Users\\143ha\\npm.cmd" ci'
+            			bat '"C:\\Users\\143ha\\npm.cmd" test -- --watchAll=false --passWithNoTests'
+        		}
+    		}
+	}
         stage('Build Docker Images') {
             steps {
                 script {
