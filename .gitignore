@@ -1,0 +1,26 @@
+# Secrets and environment files
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+
+# Java / Maven
+**/target/
+
+# Node.js
+**/node_modules/
+Frontend/todo/build/
+Frontend/todo/coverage/
+
+# Logs
+*.log
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,20 @@
+groups:
+  - name: todo-application-alerts
+    rules:
+      - alert: BackendTargetDown
+        expr: up{job="todo-backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Todo backend is unreachable"
+          description: "Prometheus has been unable to scrape the backend for 2 minutes."
+
+      - alert: HighHostCPU
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Host CPU usage is high"
+          description: "Host CPU usage has exceeded 85% for 5 minutes."
