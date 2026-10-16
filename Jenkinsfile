@@ -144,7 +144,7 @@ if errorlevel 1 exit /b 1
 			    icacls "%EC2_KEY%" /inheritance:r
 if errorlevel 1 exit /b 1
 
-icacls "%EC2_KEY%" /grant:r "%USERNAME%:R"
+			    icacls "%EC2_KEY%" /grant:r "SYSTEM:R"
 if errorlevel 1 exit /b 1
 
                             if not exist "%SSH%" (
