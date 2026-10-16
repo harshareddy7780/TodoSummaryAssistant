@@ -122,10 +122,65 @@ if errorlevel 1 exit /b 1
                     '''
                 }
             }
+
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                withCredentials([
+                    sshUserPrivateKey(
+                        credentialsId: 'ec2-deploy-key',
+                        keyFileVariable: 'EC2_KEY',
+                        usernameVariable: 'EC2_USER'
+                    )
+                ]) {
+                    script {
+                        bat '''
+                            @echo off
+                            setlocal
+
+                            set "SSH=C:\\Windows\\System32\\OpenSSH\\ssh.exe"
+                            set "SCP=C:\\Windows\\System32\\OpenSSH\\scp.exe"
+
+                            if not exist "%SSH%" (
+                                echo ERROR: OpenSSH ssh.exe not found.
+                                exit /b 1
+                            )
+
+                            "%SSH%" -i "%EC2_KEY%" -o StrictHostKeyChecking=accept-new %EC2_USER%@13.211.84.124 "sudo docker network inspect todo-network >/dev/null 2>&1 || sudo docker network create todo-network"
+
+                            if errorlevel 1 exit /b 1
+
+                            "%SSH%" -i "%EC2_KEY%" %EC2_USER%@13.211.84.124 "sudo docker pull harshareddy7780/todo-summary-backend:%IMAGE_TAG% && sudo docker pull harshareddy7780/todo-summary-frontend:%IMAGE_TAG%"
+
+                            if errorlevel 1 exit /b 1
+
+                            "%SSH%" -i "%EC2_KEY%" %EC2_USER%@13.211.84.124 "sudo docker rm -f todo-frontend >/dev/null 2>&1 || true"
+
+                            "%SSH%" -i "%EC2_KEY%" %EC2_USER%@13.211.84.124 "sudo docker rm -f todo-backend >/dev/null 2>&1 || true"
+
+                            "%SSH%" -i "%EC2_KEY%" %EC2_USER%@13.211.84.124 "sudo docker run -d --name todo-backend --restart unless-stopped --env-file /home/ec2-user/app.env -p 8081:8081 --network todo-network harshareddy7780/todo-summary-backend:%IMAGE_TAG%"
+
+                            if errorlevel 1 exit /b 1
+
+                            "%SSH%" -i "%EC2_KEY%" %EC2_USER%@13.211.84.124 "sudo docker run -d --name todo-frontend --restart unless-stopped --network todo-network -p 80:8080 harshareddy7780/todo-summary-frontend:%IMAGE_TAG%"
+
+                            if errorlevel 1 exit /b 1
+
+                            "%SSH%" -i "%EC2_KEY%" %EC2_USER%@13.211.84.124 "for i in {1..24}; do curl -fsS http://localhost:8081/actuator/health && exit 0; sleep 5; done; exit 1"
+
+                            if errorlevel 1 exit /b 1
+
+                            endlocal
+                        '''
+                    }
+                }
+            }
         }
     }
 
     post {
+
         success {
             echo 'SUCCESS: Tests passed and Docker images were built.'
         }
