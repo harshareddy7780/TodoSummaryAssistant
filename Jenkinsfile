@@ -70,7 +70,7 @@ if errorlevel 1 exit /b 1
                         if errorlevel 1 exit /b 1
 
                         "%DOCKER%" build ^
-                          --build-arg REACT_APP_API_BASE_URL=http://localhost:8081/api ^
+                          --build-arg REACT_APP_API_BASE_URL=/api ^
                           -t "%FRONTEND_IMAGE%:%IMAGE_TAG%" ^
                           -t "%FRONTEND_IMAGE%:latest" ^
                           Frontend\\todo

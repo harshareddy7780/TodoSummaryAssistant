@@ -8,10 +8,11 @@ RUN npm ci
 
 COPY . .
 
-ARG REACT_APP_API_BASE_URL=http://localhost:8081/api
-ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
-RUN npm run build
+ARG REACT_APP_API_BASE_URL=/api
+ENV REACT_APP_API_BASE_URL=/api
+
+RUN REACT_APP_API_BASE_URL=/api npm run build
 
 # Stage 2: Serve with Nginx as a non-root user
 FROM nginxinc/nginx-unprivileged:alpine
