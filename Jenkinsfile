@@ -27,7 +27,8 @@ pipeline {
                         set "MYSQL_PASSWORD=ci-validation-placeholder"
                         set "MYSQL_ROOT_PASSWORD=ci-validation-placeholder"
                         set "GRAFANA_ADMIN_PASSWORD=ci-validation-placeholder"
-                        "%DOCKER%" compose config --quiet
+                        "%DOCKER%" compose config > nul
+if errorlevel 1 exit /b 1
                 '''
             }
     }
